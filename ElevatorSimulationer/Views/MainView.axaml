@@ -1,0 +1,40 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:ElevatorSimulationer.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewmodels="using:ElevatorSimulationer.ViewModels"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="ElevatorSimulationer.Views.MainView"
+             x:DataType="viewmodels:MainViewModel">
+  <Grid>
+    <Grid.RowDefinitions></Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="250"></ColumnDefinition>
+      <ColumnDefinition Width="2"></ColumnDefinition>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="2"></ColumnDefinition>
+      <ColumnDefinition Width="400"></ColumnDefinition>
+    </Grid.ColumnDefinitions>
+
+    <!--日志-->
+      <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+        <Label FontWeight="Bold">日志</Label>
+      </StackPanel>
+
+    <GridSplitter Grid.Column="1" Background="lightgray"></GridSplitter>
+
+    <!--电梯-->
+    <Panel Grid.Column="2">
+
+    </Panel>
+
+    <GridSplitter Grid.Column="3"  Background="lightGray"></GridSplitter>
+
+    <!--用户面板-->
+    <local:ElevatorUIView Grid.Column="4"></local:ElevatorUIView>
+
+  </Grid>
+</UserControl>

@@ -1,0 +1,65 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:customcontrols="using:ElevatorSimulationer.CustomControls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:ElevatorSimulationer.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewmodels="using:ElevatorSimulationer.ViewModels"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="ElevatorSimulationer.Views.ElevatorUIView"
+             x:DataType="viewmodels:ElevatorUIViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="400"
+             d:DesignHeight="850">
+
+
+  <!-- 主体布局 -->
+  <Border Padding="12">
+    <Grid RowDefinitions="Auto,2,*">
+
+      <!-- 顶部操作区 -->
+      <WrapPanel Grid.Row="0" />
+
+      <Separator Grid.Row="1" />
+
+      <!-- 主显示区 -->
+      <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto">
+
+        <!-- 当前楼层 -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+          <Grid.Styles>
+            <Style Selector="Label">
+              <Setter Property="FontWeight" Value="Bold"/>
+              <Setter Property="FontSize" Value="24"/>
+            </Style>
+          </Grid.Styles>
+
+          <Label Grid.Column="0">当前楼层:</Label>
+          <Label Grid.Column="2" Content="一"/>
+        </Grid>
+
+        <!-- 楼层按钮 -->
+        <ScrollViewer Grid.Row="1" Margin="4">
+          <ItemsControl ItemsSource="{Binding ElevatorFloorModel}">
+    <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+            <WrapPanel />
+        </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+
+    <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="viewmodels:ElevatorFloorViewModel">
+          <customcontrols:ElevatorFloorButton></customcontrols:ElevatorFloorButton>
+        </DataTemplate>
+    </ItemsControl.ItemTemplate>
+</ItemsControl>
+
+        </ScrollViewer>
+
+        <!-- 底部占位 -->
+        <Grid Grid.Row="2"/>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>
