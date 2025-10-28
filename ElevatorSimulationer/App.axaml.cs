@@ -42,6 +42,7 @@ namespace ElevatorSimulationer
                     rollingInterval: RollingInterval.Day, // 每天一个日志文件
                     retainedFileCountLimit: 7           // 保留最近7天
                 )
+                .WriteTo.Debug()
                 .CreateLogger();
 
             serviceCollection.AddLogging(builder =>

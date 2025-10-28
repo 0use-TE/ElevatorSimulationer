@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElevatorSimulationer.ViewModels
 {
-    internal class ElevatorFloorViewModel:ViewModelBase
+    internal class OutElevatorFloorViewModel:ViewModelBase
     {
         private int _floor;
         /// <summary>
@@ -14,11 +14,15 @@ namespace ElevatorSimulationer.ViewModels
         /// </summary>
         public int Floor { get => _floor; set => SetProperty(ref _floor, value); }
 
-        private bool _isSumbited;
+        private bool _isUpSumbited;
         /// <summary>
         /// 代表被点击了
         /// </summary>
-        public bool IsSumbited { get=>_isSumbited; set=>SetProperty(ref _isSumbited,value); }
-
+        public bool IsUpSumbited { get => _isUpSumbited; set => SetProperty(ref _isUpSumbited, value); }
+        private bool _isDownSumbited;
+        /// <summary>
+        /// 代表被点击了
+        /// </summary>
+        public bool IsDownSumbited { get => _isDownSumbited; set => SetProperty(ref _isDownSumbited, value); }
     }
 }

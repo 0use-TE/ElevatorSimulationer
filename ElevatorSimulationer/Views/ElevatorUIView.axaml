@@ -10,12 +10,13 @@
              x:Class="ElevatorSimulationer.Views.ElevatorUIView"
              x:DataType="viewmodels:ElevatorUIViewModel"
              mc:Ignorable="d"
-             d:DesignWidth="400"
+             d:DesignWidth="240"
              d:DesignHeight="850">
 
 
   <!-- 主体布局 -->
   <Border Padding="12">
+      
     <Grid RowDefinitions="Auto,2,*">
 
       <!-- 顶部操作区 -->
@@ -41,7 +42,7 @@
 
         <!-- 楼层按钮 -->
         <ScrollViewer Grid.Row="1" Margin="4">
-          <ItemsControl ItemsSource="{Binding ElevatorFloorModel}">
+          <ItemsControl ItemsSource="{Binding ElevatorFloorModel}" >
     <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
             <WrapPanel />
@@ -50,7 +51,7 @@
 
     <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="viewmodels:ElevatorFloorViewModel">
-          <customcontrols:ElevatorFloorButton></customcontrols:ElevatorFloorButton>
+          <customcontrols:ElevatorFloorButton Floor="{Binding Floor}" ClickCommand="{Binding $parent[UserControl].((viewmodels:ElevatorUIViewModel)DataContext).FloatClickCommand}"></customcontrols:ElevatorFloorButton>
         </DataTemplate>
     </ItemsControl.ItemTemplate>
 </ItemsControl>

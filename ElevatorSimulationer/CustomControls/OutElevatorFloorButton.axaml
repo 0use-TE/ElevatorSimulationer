@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="using:ElevatorSimulationer.CustomControls"
-             mc:Ignorable="d" d:DesignWidth="120" d:DesignHeight="120"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="100"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             x:Class="ElevatorSimulationer.CustomControls.ElevatorFloorButton">
+             x:Class="ElevatorSimulationer.CustomControls.OutElevatorFloorButton">
 
-  <UserControl.Styles>
+
+    <UserControl.Styles>
         <!-- 通用圆形按钮样式 -->
     <Style Selector="Ellipse">
       <Setter Property="Width" Value="80"/>
@@ -19,14 +19,25 @@
     </Style>
 
   </UserControl.Styles>
-  <!-- 一个圆形按钮 -->
+  <StackPanel Orientation="Horizontal">
+    
             <Grid Width="80" Height="80" Margin="6" >
-              <Ellipse x:Name="FillEllipse"/>
-              <TextBlock Text="{Binding $parent[local:ElevatorFloorButton].Floor}"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="50"
-                         Foreground="Black"/>
+              <Ellipse x:Name="UpEllipse"/>
+                <Polygon Points="40,20 10,50 70,50"
+             Fill="Black"
+             Stroke="Black"
+             StrokeThickness="2"/>
             </Grid>
+
+           <Grid Width="80" Height="80" Margin="6" >
+              <Ellipse x:Name="DownEllipse"/>
+                <Polygon Points="40,60 10,30 70,30"
+             Fill="Black"
+             Stroke="Black"
+             StrokeThickness="2"/>
+
+            </Grid>
+       
+  </StackPanel>
 
 </UserControl>
