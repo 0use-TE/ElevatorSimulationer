@@ -1,24 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
-using Prism.Events;
 using ElevatorSimulationer.Events;
 using ElevatorSimulationer.ViewModels;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Prism.Events;
 
 namespace ElevatorSimulationer.DispatchAlgorithm
 {
-    enum ElevatorDirection
+    /// <summary>
+    /// 电梯运行方向
+    /// </summary>
+    internal enum ElevatorDirection
     {
-        Node,//代表静止
+        Node, // 静止
         Up,
         Down,
     }
+
+    /// <summary>
+    /// 电梯调度器（SCAN 算法实现）
+    /// </summary>
     internal class ElevatorScheduler
     {
         private readonly IEventAggregator _eventAggregator;
         private readonly ILogger<ElevatorScheduler> _logger;
+
+        // ---------- 配置 ----------
+        private const int MinFloor = 1;   // 最低楼层（可自行修改）
+        private const int MaxFloor = 20;  // 最高楼层（可自行修改）
+        // -------------------------
 
         public IReadOnlyCollection<ElevatorFloorViewModel> ElevatorFloorViewModels { get; set; }
             = new List<ElevatorFloorViewModel>();
@@ -41,9 +52,10 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             _logger = logger;
 
             _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Subscribe(HandleStateChanged);
-            // 可选：订阅电梯到达事件，用于清除按钮
-            _eventAggregator.GetEvent<ElevatorArrivedEvent>().Subscribe(OnElevatorArrived);
+            _eventAggregator.GetEvent<ElevatorFloorCompletedEvent>().Subscribe(OnElevatorArrived);
         }
+
+        #region 入口：状态改变时触发调度
 
         private void HandleStateChanged()
         {
@@ -51,6 +63,9 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             Scheduler();
         }
 
+        /// <summary>
+        /// 主调度入口
+        /// </summary>
         public void Scheduler()
         {
             _upStops.Clear();
@@ -59,15 +74,17 @@ namespace ElevatorSimulationer.DispatchAlgorithm
 
             _logger.LogInformation($"当前楼层: {_currentFloor}，当前方向: {_currentDirection}");
 
-            // 1. 收集请求
+            // 1. 收集所有请求
             CollectAllRequests();
 
-            // 2. 无方向 + 有请求 → 选最近
-            if (_currentDirection == ElevatorDirection.Node && (_upStops.Any() || _downStops.Any()))
+            bool hasAnyRequest = _upStops.Any() || _downStops.Any();
+
+            // 2. 静止 + 有请求 → 选最近
+            if (_currentDirection == ElevatorDirection.Node && hasAnyRequest)
             {
                 ChooseNearestFloorAsTarget();
             }
-            // 3. 有方向 → 同方向优先
+            // 3. 有方向 + 同方向有停靠 → 继续
             else if (TryGetNextStopInCurrentDirection(out int next))
             {
                 SetTarget(next, _currentDirection);
@@ -77,43 +94,61 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             {
                 SetTarget(next, _currentDirection);
             }
-            // 5. 无任何请求 → 静止
+            // 5. 【关键修改】完全无请求 → 选择“最近楼层”作为临时目标
             else
             {
-                _currentDirection = ElevatorDirection.Node;
-                _nextTargetFloor = _currentFloor;
-                _logger.LogInformation("无任何请求，电梯进入静止状态");
+                ChooseNearestFloorAsEmergencyStop();
             }
 
-            // === 统一发布目标 ===
+            // 统一发布目标
             PublishFinalTarget();
         }
 
-        #region 收集请求 + 日志
+        #endregion
+
+        #region 1. 收集请求（内部 + 外部按钮）
+
         private void CollectAllRequests()
         {
             var upList = new List<int>();
             var downList = new List<int>();
-            foreach(var item in ElevatorFloorViewModels)
-            {
-                Debug.WriteLine(item.IsActived);
-            }
-            // 内部按钮
+
+            // ---- 内部按钮 ----
             foreach (var vm in ElevatorFloorViewModels.Where(vm => vm.IsActived))
             {
                 int f = vm.Floor;
+                if (!IsValidFloor(f)) continue;
+
                 if (f > _currentFloor) { _upStops.Add(f); upList.Add(f); }
                 else if (f < _currentFloor) { _downStops.Add(f); downList.Add(f); }
                 else _logger.LogDebug($"内部按钮 {f} 层已在当前层，待开门");
             }
 
-            // 外部按钮
+            // ---- 外部按钮（关键修复）----
             foreach (var vm in OutElevatorFloorViewModels)
             {
                 int f = vm.Floor;
-                if (vm.IsUpActived) { _upStops.Add(f); upList.Add(f); }
+                if (!IsValidFloor(f)) continue;
 
-                if (vm.IsDownActived) { _downStops.Add(f); downList.Add(f); }
+                // 无论上行还是下行按钮，只要楼层 > 当前楼 → 上行队列
+                if (vm.IsUpActived || vm.IsDownActived)
+                {
+                    if (f > _currentFloor)
+                    {
+                        _upStops.Add(f);
+                        upList.Add(f);
+                    }
+                    else if (f < _currentFloor)
+                    {
+                        _downStops.Add(f);
+                        downList.Add(f);
+                    }
+                    else
+                    {
+                        // 在当前楼层，按了外部按钮 → 立即开门
+                        _logger.LogDebug($"外部按钮 {f} 层在当前层，待开门");
+                    }
+                }
             }
 
             _logger.LogDebug($"收集完成 → UpStops: [{string.Join(",", upList.OrderBy(x => x))}]");
@@ -121,11 +156,12 @@ namespace ElevatorSimulationer.DispatchAlgorithm
         }
         #endregion
 
-        #region 选择最近目标
+        #region 2. 静止时选择最近楼层
+
         private void ChooseNearestFloorAsTarget()
         {
-            int? up = _upStops.Min;
-            int? down = _downStops.Max;
+            int? up = _upStops.Any() ? _upStops.Min : (int?)null;
+            int? down = _downStops.Any() ? _downStops.Max : (int?)null;
 
             _logger.LogDebug($"静止选最近 → Up候选: {up}, Down候选: {down}");
 
@@ -133,6 +169,7 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             {
                 int distUp = up.Value - _currentFloor;
                 int distDown = _currentFloor - down.Value;
+
                 if (distUp <= distDown)
                 {
                     SetTarget(up.Value, ElevatorDirection.Up);
@@ -155,17 +192,20 @@ namespace ElevatorSimulationer.DispatchAlgorithm
                 _downStops.Remove(down.Value);
             }
         }
+
         #endregion
 
-        #region 同方向下一个
+        #region 3. 同方向下一个停靠点
+
         private bool TryGetNextStopInCurrentDirection(out int nextFloor)
         {
             nextFloor = 0;
 
             if (_currentDirection == ElevatorDirection.Up && _upStops.Any())
             {
+                // 取 >= 当前楼层 的最小值
                 nextFloor = _upStops.FirstOrDefault(f => f >= _currentFloor);
-                if (nextFloor != 0)
+                if (nextFloor != 0 && IsValidFloor(nextFloor))
                 {
                     _upStops.Remove(nextFloor);
                     _logger.LogDebug($"同方向(Up) → 下一个停靠: {nextFloor}");
@@ -175,8 +215,9 @@ namespace ElevatorSimulationer.DispatchAlgorithm
 
             if (_currentDirection == ElevatorDirection.Down && _downStops.Any())
             {
+                // 取 <= 当前楼层 的最大值
                 nextFloor = _downStops.LastOrDefault(f => f <= _currentFloor);
-                if (nextFloor != 0)
+                if (nextFloor != 0 && IsValidFloor(nextFloor))
                 {
                     _downStops.Remove(nextFloor);
                     _logger.LogDebug($"同方向(Down) → 下一个停靠: {nextFloor}");
@@ -187,9 +228,11 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             _logger.LogDebug($"同方向无停靠 (当前方向: {_currentDirection})");
             return false;
         }
+
         #endregion
 
-        #region 切换方向
+        #region 4. 切换方向并取反方向最近点
+
         private bool TrySwitchDirectionAndGetNextStop(out int nextFloor)
         {
             nextFloor = 0;
@@ -215,35 +258,46 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             _logger.LogDebug("无反方向请求，无法切换");
             return false;
         }
+
         #endregion
 
         #region 统一设置目标
+
         private void SetTarget(int floor, ElevatorDirection dir)
         {
             _nextTargetFloor = floor;
-            _currentDirection = dir;
+            _currentDirection = dir;  
             _logger.LogDebug($"设置目标 → 楼层: {floor}，方向: {dir}");
         }
         #endregion
 
-        #region 统一发布
+        #region 统一发布目标楼层
+
         private void PublishFinalTarget()
         {
             int floorToPublish = _nextTargetFloor ?? _currentFloor;
             _eventAggregator.GetEvent<ElevatorTargetFoundEvent>().Publish(floorToPublish);
             _logger.LogInformation($"===== 最终调度目标: {floorToPublish} 楼，方向: {_currentDirection} =====");
         }
+
         #endregion
 
-        #region 电梯到达后清除按钮（关键！）
+        #region 电梯到达后处理（清除按钮 + 重新调度）
+
         private void OnElevatorArrived(int arrivedFloor)
         {
+            if (!IsValidFloor(arrivedFloor))
+            {
+                _logger.LogWarning($"到达楼层 {arrivedFloor} 非法，已忽略");
+                return;
+            }
+
             _currentFloor = arrivedFloor;
             _logger.LogInformation($"电梯到达 {arrivedFloor} 楼，清除该层按钮");
 
             ClearFloorButtons(arrivedFloor);
 
-            // 到达后重新调度（可能有新内部目标）
+            // 到达后立即重新调度（可能有新的内部目标）
             Scheduler();
         }
 
@@ -274,6 +328,45 @@ namespace ElevatorSimulationer.DispatchAlgorithm
                 }
             }
         }
+
         #endregion
+
+        #region 辅助：楼层合法性校验
+
+        private bool IsValidFloor(int floor)
+        {
+            if (floor < MinFloor || floor > MaxFloor)
+            {
+                _logger.LogWarning($"楼层 {floor} 超出合法范围 [{MinFloor}-{MaxFloor}]，已忽略");
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 无任何请求时：选择最近的楼层作为紧急停靠点（安全停靠）
+        /// </summary>
+        private void ChooseNearestFloorAsEmergencyStop()
+        {
+            var allFloors = Enumerable.Range(MinFloor, MaxFloor - MinFloor + 1);
+
+            // 找出距离当前楼层最近的楼层
+            int nearestFloor = allFloors
+                .OrderBy(f => Math.Abs(f - _currentFloor))
+                .First();
+
+            // 确定方向（如果不在当前楼层）
+            ElevatorDirection targetDir = nearestFloor > _currentFloor ? ElevatorDirection.Up :
+                                          nearestFloor < _currentFloor ? ElevatorDirection.Down :
+                                          ElevatorDirection.Node;
+
+            _currentDirection = targetDir;
+            _nextTargetFloor = nearestFloor;
+
+            _logger.LogInformation($"【紧急停靠】无请求，电梯将停靠最近楼层: {nearestFloor} 楼");
+        }
     }
 }

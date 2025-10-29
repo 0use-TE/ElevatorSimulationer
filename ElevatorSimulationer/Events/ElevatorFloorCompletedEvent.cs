@@ -7,7 +7,7 @@ using Prism.Events;
 
 namespace ElevatorSimulationer.Events
 {
-    internal class ElevatorArrivedEvent:PubSubEvent<int>
+    internal class ElevatorFloorCompletedEvent:PubSubEvent<int>
     {
     }
 }

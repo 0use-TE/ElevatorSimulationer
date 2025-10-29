@@ -1,0 +1,47 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:viewmodels="using:ElevatorSimulationer.ViewModels"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="ElevatorSimulationer.Views.ElevatorSportView"
+             x:DataType="viewmodels:ElevatorSportViewModel">
+
+    <Canvas Height="400"
+            Background="#f8f8f8"
+            ClipToBounds="True"
+            Loaded="Canvas_Loaded">
+
+        <Canvas x:Name="FloorLinesCanvas"/>
+
+        <!-- 电梯轿厢外框：深绿（贴片外观） -->
+        <Border Width="80"
+                Height="60"
+                Background="#4CAF50"
+                CornerRadius="6"
+                Canvas.Top="{Binding ElevatorY}"
+                ClipToBounds="True">
+
+            <Grid>
+                <!-- 白色内部：始终存在，被门遮挡 -->
+                <Border Background="#FFFFFF"
+                        Width="80"
+                        Height="60"
+                        CornerRadius="6"/>
+
+                <!-- 左门：从 40 → 0 向左收缩 -->
+                <Border Width="{Binding LeftDoorWidth}"
+                        Height="60"
+                        Background="#2E7D32"
+                        HorizontalAlignment="Left"
+                        CornerRadius="0,6,6,0"/>
+
+                <!-- 右门：从 40 → 0 向右收缩 -->
+                <Border Width="{Binding RightDoorWidth}"
+                        Height="60"
+                        Background="#2E7D32"
+                        HorizontalAlignment="Right"
+                        CornerRadius="6,0,0,6"/>
+            </Grid>
+        </Border>
+    </Canvas>
+</UserControl>
