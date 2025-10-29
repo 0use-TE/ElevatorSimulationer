@@ -18,7 +18,7 @@
       <ColumnDefinition Width="2"></ColumnDefinition>
       <ColumnDefinition Width="240"></ColumnDefinition>
       <ColumnDefinition Width="2"></ColumnDefinition>
-      <ColumnDefinition Width="300"></ColumnDefinition>
+      <ColumnDefinition Width="290"></ColumnDefinition>
     </Grid.ColumnDefinitions>
 
     <!--日志-->

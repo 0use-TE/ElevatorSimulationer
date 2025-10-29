@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="100"
+             mc:Ignorable="d" d:DesignWidth="240" d:DesignHeight="100"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             x:Class="ElevatorSimulationer.CustomControls.OutElevatorFloorButton">
+             x:Class="ElevatorSimulationer.CustomControls.OutElevatorFloorButton"
+             xmlns:customControl="using:ElevatorSimulationer.CustomControls">
 
 
     <UserControl.Styles>
@@ -19,25 +20,33 @@
     </Style>
 
   </UserControl.Styles>
-  <StackPanel Orientation="Horizontal">
+  <Grid ColumnDefinitions="Auto,*,Auto">
     
-            <Grid Width="80" Height="80" Margin="6" >
+    <Panel Grid.Column="0">
+            <Panel HorizontalAlignment="Center" VerticalAlignment="Center">
+     <TextBlock Grid.Column="0" FontSize="65" FontWeight="SemiLight" Text="{Binding $parent[customControl:OutElevatorFloorButton].Floor}"></TextBlock>
+      </Panel>
+    </Panel>
+
+    <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <Grid Width="70" Height="70" Margin="6" >
               <Ellipse x:Name="UpEllipse"/>
-                <Polygon Points="40,20 10,50 70,50"
+                <Polygon Points="35,20 5,50 65,50"
              Fill="Black"
              Stroke="Black"
              StrokeThickness="2"/>
             </Grid>
 
-           <Grid Width="80" Height="80" Margin="6" >
+           <Grid Width="70" Height="70" Margin="6" >
               <Ellipse x:Name="DownEllipse"/>
-                <Polygon Points="40,60 10,30 70,30"
+                <Polygon Points="35,55 5,25 65,25"
              Fill="Black"
              Stroke="Black"
              StrokeThickness="2"/>
-
             </Grid>
        
-  </StackPanel>
+    </StackPanel>
+
+  </Grid>
 
 </UserControl>

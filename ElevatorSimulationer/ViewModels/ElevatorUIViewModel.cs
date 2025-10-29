@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ElevatorSimulationer.Misc;
 using Microsoft.Extensions.Logging;
 using Prism.Commands;
 
@@ -18,7 +19,7 @@ namespace ElevatorSimulationer.ViewModels
         {
             _logger = logger;
 
-            foreach (var item in Enumerable.Range(0, 5))
+            foreach (var item in Enumerable.Range(0, Settings.FloorCount))
                {
                 ElevatorFloorModel.Add(new ElevatorFloorViewModel
                 {
@@ -29,6 +30,7 @@ namespace ElevatorSimulationer.ViewModels
             FloatClickCommand = new DelegateCommand<object>(data =>
             {
                 _logger.LogInformation("点击了按钮:" + data);
+                
             });
         }
 
