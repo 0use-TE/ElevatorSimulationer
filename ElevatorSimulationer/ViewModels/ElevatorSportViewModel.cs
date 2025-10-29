@@ -16,7 +16,7 @@ namespace ElevatorSimulationer.ViewModels
     {
         private const int MinFloor = 1;
         private const double FloorHeight = 70;
-        private const double SecPerFloor = 0.8;
+        private const double SecPerFloor = 2;
         // ElevatorSportViewModel.cs（在原有代码后追加）
 
         private const double DoorClosedWidth = 40;    // 门关闭宽度
@@ -108,7 +108,6 @@ namespace ElevatorSimulationer.ViewModels
         }
         private void StartMoveToFloor(int targetFloor)
         {
-            _state = ElevatorState.Busy;
 
             _targetY = FloorHeight * (Settings.FloorCount - targetFloor);
             _startY = ElevatorY;
@@ -145,6 +144,8 @@ namespace ElevatorSimulationer.ViewModels
         }
         private void StartDoorSequence(int completedFloor)
         {
+            _state = ElevatorState.Busy;
+
             // 保持 Busy 状态
             OpenDoor(() =>
             {
