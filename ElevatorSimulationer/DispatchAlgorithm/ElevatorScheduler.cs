@@ -297,8 +297,6 @@ namespace ElevatorSimulationer.DispatchAlgorithm
 
             ClearFloorButtons(arrivedFloor);
 
-            // 到达后立即重新调度（可能有新的内部目标）
-            Scheduler();
         }
 
         private void ClearFloorButtons(int floor)

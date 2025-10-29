@@ -1,15 +1,20 @@
 using Avalonia.Threading;
 using ElevatorSimulationer.Events;
+using ElevatorSimulationer.Misc;
 using Microsoft.Extensions.Logging;
 using Prism.Events;
 using System;
 
 namespace ElevatorSimulationer.ViewModels
 {
+   enum ElevatorState
+    {
+        Idle,           // 可移动
+        Busy            // 移动中、开门中、等待中、关门中 → 忽略新请求
+    }
     public class ElevatorSportViewModel : ViewModelBase
     {
         private const int MinFloor = 1;
-        private const int MaxFloor = 5;
         private const double FloorHeight = 70;
         private const double SecPerFloor = 0.8;
         // ElevatorSportViewModel.cs（在原有代码后追加）
@@ -18,7 +23,7 @@ namespace ElevatorSimulationer.ViewModels
         private const double DoorOpenWidth = 0;   // 门完全打开宽度
         private const double DoorAnimSec = 0.6;  // 开关门动画时长
         private const double AutoCloseSec = 2.0;  // 自动关门等待时间
-
+        private ElevatorState _state = ElevatorState.Idle;
         private double _leftDoorWidth;
         public double LeftDoorWidth
         {
@@ -59,14 +64,16 @@ namespace ElevatorSimulationer.ViewModels
         private double _targetY;
         private double _startY;
         private DateTime _moveStartTime;
-
+        private void ClearState(int floor) =>                    // 关门完成 → 发布事件 + 恢复空闲
+                        _eventAggregator.GetEvent<ElevatorFloorCompletedEvent>()
+                            .Publish(floor);
         public ElevatorSportViewModel(IEventAggregator eventAggregator, ILogger<ElevatorSportViewModel> logger)
         {
             _eventAggregator = eventAggregator;
             _logger = logger;
 
             // 初始位置：1 楼在底部
-            ElevatorY = FloorHeight * (MaxFloor - MinFloor);
+            ElevatorY = FloorHeight * (Settings.FloorCount- MinFloor);
             CurrentFloor = MinFloor;
 
             LeftDoorWidth = DoorClosedWidth;
@@ -78,16 +85,39 @@ namespace ElevatorSimulationer.ViewModels
 
         private void MoveToFloor(int targetFloor)
         {
-            if (targetFloor < MinFloor || targetFloor > MaxFloor) return;
-            if (targetFloor == CurrentFloor) return;
+            if (targetFloor < MinFloor || targetFloor > Settings.FloorCount)
+            {
+                ClearState(targetFloor);
+                return;
+            }
 
-            _targetY = FloorHeight * (MaxFloor - targetFloor);
+            if (targetFloor == CurrentFloor)
+            {
+                ClearState(targetFloor);
+                return;
+            }
+
+            // 关键：只有空闲时才接受移动
+            if (_state != ElevatorState.Idle)
+            {
+                _logger.LogInformation("电梯忙碌中，忽略目标楼层: {Floor}", targetFloor);
+                return;
+            }
+
+            StartMoveToFloor(targetFloor);
+        }
+        private void StartMoveToFloor(int targetFloor)
+        {
+            _state = ElevatorState.Busy;
+
+            _targetY = FloorHeight * (Settings.FloorCount - targetFloor);
             _startY = ElevatorY;
             _moveStartTime = DateTime.Now;
 
             double duration = Math.Abs(targetFloor - CurrentFloor) * SecPerFloor;
 
             _logger.LogInformation("电梯开始移动 → 从 {From} 楼 到 {To} 楼", CurrentFloor, targetFloor);
+  
 
             _timer?.Stop();
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
@@ -96,8 +126,6 @@ namespace ElevatorSimulationer.ViewModels
             {
                 double elapsed = (DateTime.Now - _moveStartTime).TotalSeconds;
                 double t = Math.Min(elapsed / duration, 1.0);
-
-                // EaseOutQuad
                 double eased = 1 - Math.Pow(1 - t, 2);
                 ElevatorY = _startY + (_targetY - _startY) * eased;
 
@@ -108,34 +136,33 @@ namespace ElevatorSimulationer.ViewModels
                     ElevatorY = _targetY;
                     _logger.LogInformation("电梯到达目标楼层: {Floor}", targetFloor);
 
-                    // === 关键：到达后自动开门流程 ===
+                    ClearState(targetFloor);
+
                     StartDoorSequence(targetFloor);
                 }
             };
             _timer.Start();
         }
-
         private void StartDoorSequence(int completedFloor)
         {
-            if (_isDoorAnimating) return;
-            _isDoorAnimating = true;
-
+            // 保持 Busy 状态
             OpenDoor(() =>
             {
-                // 开门完成 → 2s 后自动关门
+                // 2s 后自动关门
                 _doorTimer?.Stop();
                 _doorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(AutoCloseSec) };
                 _doorTimer.Tick += (s, e) =>
                 {
                     _doorTimer.Stop();
+
                     CloseDoor(() =>
                     {
-                        // 关门完成 → 发布事件
-                        _eventAggregator.GetEvent<ElevatorFloorCompletedEvent>()
-                            .Publish(completedFloor);
+        
+                        _state = ElevatorState.Idle;  // 关键：恢复可移动
 
-                        _isDoorAnimating = false;
-                        _logger.LogInformation("楼层 {Floor} 处理完成，状态已重置", completedFloor);
+                        _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
+
+                        _logger.LogInformation("楼层 {Floor} 处理完成，电梯空闲，可接受新任务", completedFloor);
                     });
                 };
                 _doorTimer.Start();
