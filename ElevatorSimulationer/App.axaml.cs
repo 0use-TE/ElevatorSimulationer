@@ -56,6 +56,9 @@ namespace ElevatorSimulationer
                 builder.AddSerilog();
             });
 
+            serviceCollection.AddSingleton<ElevatorUIViewModel>();
+            serviceCollection.AddSingleton<OutElevatorUIViewModel>();
+
             Container.GetContainer().Populate(serviceCollection);
             // Register you Services, Views, Dialogs, etc.
         }
@@ -73,8 +76,10 @@ namespace ElevatorSimulationer
                 {
                     //设置电梯内信息
                     _elevatorScheduler.ElevatorFloorViewModels = _elevatorUIViewModel.ElevatorFloorModel;
+                    Debug.WriteLine(_elevatorScheduler.ElevatorFloorViewModels.Count);
                     //设置电梯外信息
                     _elevatorScheduler.OutElevatorFloorViewModels = _outElevatorUIViewModel.OutElevatorFloorModel;
+                    Debug.WriteLine(_outElevatorUIViewModel.OutElevatorFloorModel.Count);
                     _logger.LogInformation("调度算法加载成功!");
                 }
                 else

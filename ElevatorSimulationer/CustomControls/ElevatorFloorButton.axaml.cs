@@ -90,7 +90,6 @@ namespace ElevatorSimulationer.CustomControls
             {
                 Debug.WriteLine($"触发梯内 {Floor} 楼双击取消事件");
                 _isChecked = false;
-                IsActive = false; // 反向同步到属性
                 DoubleClickCancelCommand?.Execute(Floor);
                 return;
             }
@@ -100,7 +99,6 @@ namespace ElevatorSimulationer.CustomControls
             {
                 Debug.WriteLine($"触发梯内 {Floor} 楼点击事件");
                 _isChecked = true;
-                IsActive = true; // 激活
                 ClickCommand?.Execute(Floor);
             }
         }

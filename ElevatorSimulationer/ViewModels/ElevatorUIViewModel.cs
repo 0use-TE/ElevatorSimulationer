@@ -39,8 +39,8 @@ namespace ElevatorSimulationer.ViewModels
                 if (floor != null)
                 {
                     floor.IsActived = true;
-                    _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
                     _logger.LogDebug($"发布事件{typeof(ElevatorStateChangedEvent)},通知点击楼层{data}");
+                    _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
                 }
             });
 
@@ -51,8 +51,8 @@ namespace ElevatorSimulationer.ViewModels
                 if (floor != null)
                 {
                     floor.IsActived = false;
-                    _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
                     _logger.LogDebug($"发布事件{typeof(ElevatorStateChangedEvent)},通知取消楼层{data}");
+                    _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
                 }
             });
         }
