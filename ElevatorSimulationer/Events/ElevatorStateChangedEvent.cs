@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Prism.Events;
 
-namespace ElevatorSimulationer.DispatchAlgorithm
+namespace ElevatorSimulationer.Events
 {
-    internal class DispatchAlgorithm
+    internal class ElevatorStateChangedEvent:PubSubEvent
     {
 
     }

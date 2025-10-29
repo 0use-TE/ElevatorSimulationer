@@ -11,7 +11,7 @@
              x:DataType="viewmodels:OutElevatorUIViewModel">
 
   <Border Padding="12">
-    <ItemsControl ItemsSource="{Binding ElevatorFloorModel}">
+    <ItemsControl ItemsSource="{Binding OutElevatorFloorModel}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <StackPanel ></StackPanel>

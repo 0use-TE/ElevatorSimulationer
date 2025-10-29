@@ -12,14 +12,14 @@ namespace ElevatorSimulationer.ViewModels
     internal class OutElevatorUIViewModel:ViewModelBase
     {
         private readonly ILogger<OutElevatorUIViewModel> _logger;
-        public ObservableCollection<OutElevatorFloorViewModel> ElevatorFloorModel { get; set; } = new ObservableCollection<OutElevatorFloorViewModel>();
+        public ObservableCollection<OutElevatorFloorViewModel> OutElevatorFloorModel { get;private set; } = new ObservableCollection<OutElevatorFloorViewModel>();
 
         public OutElevatorUIViewModel(ILogger<OutElevatorUIViewModel> logger)
         {
             _logger = logger;
             foreach(var item in Enumerable.Range(1,Settings.FloorCount))
             {
-                ElevatorFloorModel.Add(new OutElevatorFloorViewModel
+                OutElevatorFloorModel.Add(new OutElevatorFloorViewModel
                 {
                     Floor = item,
                 });

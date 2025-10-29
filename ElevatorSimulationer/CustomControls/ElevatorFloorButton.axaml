@@ -20,7 +20,7 @@
 
   </UserControl.Styles>
   <!-- 一个圆形按钮 -->
-            <Grid Width="80" Height="80" Margin="6" >
+            <Grid  Width="80" Height="80" Margin="6" >
               <Ellipse Fill="{Binding $parent[local:ElevatorFloorButton].ButtonFill}" />
               <TextBlock Text="{Binding $parent[local:ElevatorFloorButton].Floor}"
                          HorizontalAlignment="Center"

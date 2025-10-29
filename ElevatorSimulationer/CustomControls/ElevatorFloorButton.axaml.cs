@@ -39,7 +39,7 @@ namespace ElevatorSimulationer.CustomControls
         }
 
         public static readonly StyledProperty<IBrush> ButtonFillProperty =
-            AvaloniaProperty.Register<ElevatorFloorButton, IBrush>(nameof(ButtonFill));
+            AvaloniaProperty.Register<ElevatorFloorButton, IBrush>(nameof(ButtonFill),Settings.DefaultFill);
 
         public IBrush ButtonFill
         {

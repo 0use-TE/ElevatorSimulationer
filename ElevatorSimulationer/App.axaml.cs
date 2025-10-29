@@ -1,12 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DryIoc.Microsoft.DependencyInjection;
+using ElevatorSimulationer.DispatchAlgorithm;
 using ElevatorSimulationer.ViewModels;
 using ElevatorSimulationer.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Prism.Container.DryIoc;
 using Prism.DryIoc;
 using Prism.Ioc;
@@ -14,8 +19,9 @@ using Serilog;
 
 namespace ElevatorSimulationer
 {
-    public partial class App : PrismApplication
+    internal partial class App : PrismApplication
     {
+        private ElevatorScheduler? _elevatorScheduler;
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -52,6 +58,32 @@ namespace ElevatorSimulationer
 
             Container.GetContainer().Populate(serviceCollection);
             // Register you Services, Views, Dialogs, etc.
+        }
+        protected override void OnInitialized()
+        {
+            //实例化调度类
+            base.OnInitialized();
+            _elevatorScheduler = Container.Resolve<ElevatorScheduler>();
+            var _elevatorUIViewModel = Container.Resolve<ElevatorUIViewModel>();
+            var _outElevatorUIViewModel = Container.Resolve<OutElevatorUIViewModel>();
+            var _logger = Container.Resolve<ILogger<App>>();
+            try
+            {
+                if (_elevatorScheduler != null)
+                {
+                    //设置电梯内信息
+                    _elevatorScheduler.ElevatorFloorViewModels = _elevatorUIViewModel.ElevatorFloorModel;
+                    //设置电梯外信息
+                    _elevatorScheduler.OutElevatorFloorViewModels = _outElevatorUIViewModel.OutElevatorFloorModel;
+                    _logger.LogInformation("调度算法加载成功!");
+                }
+                else
+                    _logger.LogError("调度算法加载失败!");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("调度算法加载失败!\n"+ex.Message);
+            }
         }
     }
 }
