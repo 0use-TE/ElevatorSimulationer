@@ -15,6 +15,7 @@ namespace ElevatorSimulationer.ViewModels
     {
         private readonly ILogger<ElevatorUIViewModel> _logger;
         public ObservableCollection<ElevatorFloorViewModel> ElevatorFloorModel { get; set; } = new ObservableCollection<ElevatorFloorViewModel>();
+
         public ElevatorUIViewModel(ILogger<ElevatorUIViewModel> logger)
         {
             _logger = logger;
@@ -26,15 +27,25 @@ namespace ElevatorSimulationer.ViewModels
                     Floor = item+1
                 });
             }
-
+            //data代表是几楼
             FloatClickCommand = new DelegateCommand<object>(data =>
             {
-                _logger.LogInformation("点击了按钮:" + data);
-                
+                _logger.LogInformation("梯内:前往楼层:" + data);
+                var floor = ElevatorFloorModel.FirstOrDefault(x => x.Floor == (int)data);
+                if (floor != null)
+                    floor.IsActived = true;
+            });
+
+            DoubleClickCancelCommand = new DelegateCommand<object>(data =>
+            {
+                _logger.LogInformation("梯内：取消楼层:" + data);
+                var floor = ElevatorFloorModel.FirstOrDefault(x => x.Floor == (int)data);
+                if (floor != null)
+                    floor.IsActived = false;
             });
         }
 
         public DelegateCommand<object> FloatClickCommand { get; set; }
-
+        public DelegateCommand<object> DoubleClickCancelCommand { get;set; }
     }
 }

@@ -51,7 +51,9 @@
 
     <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="viewmodels:ElevatorFloorViewModel">
-          <customcontrols:ElevatorFloorButton Floor="{Binding Floor}" ClickCommand="{Binding $parent[UserControl].((viewmodels:ElevatorUIViewModel)DataContext).FloatClickCommand}"></customcontrols:ElevatorFloorButton>
+          <customcontrols:ElevatorFloorButton Floor="{Binding Floor}" IsActive="{Binding IsActived,Mode=TwoWay}"
+                                              ClickCommand="{Binding $parent[UserControl].((viewmodels:ElevatorUIViewModel)DataContext).FloatClickCommand}"
+                                              DoubleClickCancelCommand="{Binding $parent[UserControl].((viewmodels:ElevatorUIViewModel)DataContext).DoubleClickCancelCommand}"></customcontrols:ElevatorFloorButton>
         </DataTemplate>
     </ItemsControl.ItemTemplate>
 </ItemsControl>

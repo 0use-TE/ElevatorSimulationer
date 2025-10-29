@@ -14,11 +14,11 @@ namespace ElevatorSimulationer.ViewModels
         /// </summary>
         public int Floor { get => _floor; set => SetProperty(ref _floor, value); }
 
-        private bool _isSumbited;
+        private bool _isActived;
         /// <summary>
         /// 代表被点击了
         /// </summary>
-        public bool IsSumbited { get=>_isSumbited; set=>SetProperty(ref _isSumbited,value); }
+        public bool IsActived { get=>_isActived; set=>SetProperty(ref _isActived,value); }
 
     }
 }
