@@ -15,7 +15,6 @@
       <Setter Property="Height" Value="80"/>
       <Setter Property="StrokeThickness" Value="2"/>
       <Setter Property="Stroke" Value="Black"/>
-      <Setter Property="Fill" Value="Gray"/>
     </Style>
 
   </UserControl.Styles>

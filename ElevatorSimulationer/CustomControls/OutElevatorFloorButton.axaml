@@ -29,16 +29,16 @@
     </Panel>
 
     <StackPanel Grid.Column="2" Orientation="Horizontal">
-            <Grid Width="70" Height="70" Margin="6" >
-              <Ellipse x:Name="UpEllipse"/>
+            <Grid x:Name="UpEllipse" Width="70" Height="70" Margin="6" >
+              <Ellipse />
                 <Polygon Points="35,20 5,45 65,45"
              Fill="Black"
              Stroke="Black"
              StrokeThickness="2"/>
             </Grid>
 
-           <Grid Width="70" Height="70" Margin="6" >
-              <Ellipse x:Name="DownEllipse"/>
+           <Grid x:Name="DownEllipse" Width="70" Height="70" Margin="6" >
+              <Ellipse />
                 <Polygon Points="35,55 5,25 65,25"
              Fill="Black"
              Stroke="Black"
