@@ -22,17 +22,25 @@ namespace ElevatorSimulationer.Views
 
             canvas.Children.Clear();
 
-            for (int floor = 1; floor <= Settings.FloorCount; floor++)
+            for (int floor = 0; floor <= Settings.FloorCount; floor++)
             {
                 double y = FloorHeight * (Settings.FloorCount- floor);
                 var line = new Line
                 {
                     StartPoint = new Point(0, y),
-                    EndPoint = new Point(300, y),
+                    EndPoint = new Point(100, y),
                     Stroke = Brushes.Gray,
                     StrokeThickness = 2
                 };
+                var text = new TextBlock
+                {
+                    Text = floor.ToString(),
+                };
+                Canvas.SetLeft(text, 100);
+                Canvas.SetTop(text, 400 - 70 * floor);
                 canvas.Children.Add(line);
+                canvas.Children.Add(text);
+
             }
         }
     }

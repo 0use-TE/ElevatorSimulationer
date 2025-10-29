@@ -53,6 +53,11 @@ namespace ElevatorSimulationer.DispatchAlgorithm
 
             _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Subscribe(HandleStateChanged);
             _eventAggregator.GetEvent<ElevatorFloorCompletedEvent>().Subscribe(OnElevatorArrived);
+
+            _eventAggregator.GetEvent<ElevatorPassingFloorEvent>().Subscribe(x =>
+            {
+                _currentFloor = x;
+            });
         }
 
         #region 入口：状态改变时触发调度
@@ -151,8 +156,9 @@ namespace ElevatorSimulationer.DispatchAlgorithm
                 }
             }
 
-            _logger.LogDebug($"收集完成 → UpStops: [{string.Join(",", upList.OrderBy(x => x))}]");
-            _logger.LogDebug($"           → DownStops: [{string.Join(",", downList.OrderByDescending(x => x))}]");
+            _logger.LogDebug($"收集完成:");
+            _logger.LogDebug($"→ UpStops: [{string.Join(",", upList.OrderBy(x => x))}]");
+            _logger.LogDebug($"→ DownStops: [{string.Join(",", downList.OrderByDescending(x => x))}]");
         }
         #endregion
 

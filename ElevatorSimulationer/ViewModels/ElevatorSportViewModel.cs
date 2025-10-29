@@ -106,17 +106,18 @@ namespace ElevatorSimulationer.ViewModels
 
             StartMoveToFloor(targetFloor);
         }
+        private int _startFloor;  // 新增：记录起始楼层
         private void StartMoveToFloor(int targetFloor)
         {
-
             _targetY = FloorHeight * (Settings.FloorCount - targetFloor);
             _startY = ElevatorY;
+            _startFloor = CurrentFloor;  // ← 固定起点楼层
             _moveStartTime = DateTime.Now;
 
-            double duration = Math.Abs(targetFloor - CurrentFloor) * SecPerFloor;
+            // 使用起点楼层计算总时长（固定不变！）
+            double duration = Math.Abs(targetFloor - _startFloor) * SecPerFloor;
 
-            _logger.LogInformation("电梯开始移动 → 从 {From} 楼 到 {To} 楼", CurrentFloor, targetFloor);
-  
+            _logger.LogInformation("电梯开始移动 → 从 {From} 楼 到 {To} 楼，预计 {Sec}s", _startFloor, targetFloor, duration);
 
             _timer?.Stop();
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
@@ -126,21 +127,49 @@ namespace ElevatorSimulationer.ViewModels
                 double elapsed = (DateTime.Now - _moveStartTime).TotalSeconds;
                 double t = Math.Min(elapsed / duration, 1.0);
                 double eased = 1 - Math.Pow(1 - t, 2);
+
                 ElevatorY = _startY + (_targetY - _startY) * eased;
+
+                // ========== 实时更新楼层（安全）==========
+                int newFloor = CalculateFloorFromY(ElevatorY);
+
+                if (newFloor != CurrentFloor)
+                {
+                    int previousFloor = CurrentFloor;
+                    CurrentFloor = newFloor;
+                    _logger.LogInformation("电梯经过楼层: {From} → {To}", previousFloor, newFloor);
+
+                    _eventAggregator.GetEvent<ElevatorPassingFloorEvent>()
+                        .Publish(newFloor);
+                }
 
                 if (t >= 1.0)
                 {
                     _timer.Stop();
-                    CurrentFloor = targetFloor;
                     ElevatorY = _targetY;
+                    CurrentFloor = targetFloor;  
                     _logger.LogInformation("电梯到达目标楼层: {Floor}", targetFloor);
 
                     ClearState(targetFloor);
-
                     StartDoorSequence(targetFloor);
                 }
             };
+
             _timer.Start();
+        }
+        private int CalculateFloorFromY(double y)
+        {
+            // Y = FloorHeight * (Settings.FloorCount - floor)
+            // → floor = Settings.FloorCount - (y / FloorHeight)
+            double floorDouble = Settings.FloorCount - (y / FloorHeight);
+
+            // 选择取整策略：
+            // - Math.Round：四舍五入（推荐，平滑过渡）
+            // - Math.Floor：只在完全进入下一层才更新
+            // - Math.Ceiling：提前显示
+
+            int floor = (int)Math.Round(floorDouble);
+            return Math.Clamp(floor, MinFloor, Settings.FloorCount);
         }
         private void StartDoorSequence(int completedFloor)
         {

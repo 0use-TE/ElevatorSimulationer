@@ -17,13 +17,6 @@
   <!-- 主体布局 -->
   <Border Padding="12">
       
-    <Grid RowDefinitions="Auto,2,*">
-
-      <!-- 顶部操作区 -->
-      <WrapPanel Grid.Row="0" />
-
-      <Separator Grid.Row="1" />
-
       <!-- 主显示区 -->
       <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto">
 
@@ -37,7 +30,7 @@
           </Grid.Styles>
 
           <Label Grid.Column="0">当前楼层:</Label>
-          <Label Grid.Column="2" Content="一"/>
+          <Label Grid.Column="2" FontSize="25" Foreground="Red" FontWeight="Bold" Content="{Binding  CurrentFloor}"/>
         </Grid>
 
         <!-- 楼层按钮 -->
@@ -62,7 +55,6 @@
 
         <!-- 底部占位 -->
         <Grid Grid.Row="2"/>
-      </Grid>
     </Grid>
   </Border>
 </UserControl>

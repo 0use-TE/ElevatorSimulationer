@@ -4,14 +4,22 @@
              xmlns:viewmodels="using:ElevatorSimulationer.ViewModels"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="ElevatorSimulationer.Views.ElevatorSportView"
-             x:DataType="viewmodels:ElevatorSportViewModel">
+             x:DataType="viewmodels:ElevatorSportViewModel"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="800"
+             d:DesignWidth="130">
 
+  <Grid RowDefinitions="Auto,*,Auto,*">
+    <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="20" FontStretch="SemiCondensed"
+               FontWeight="SemiBold" >电梯视图</TextBlock>
     <Canvas Height="400"
-            Background="#f8f8f8"
             ClipToBounds="True"
-            Loaded="Canvas_Loaded">
+            Loaded="Canvas_Loaded"
+            Grid.Row="2">
 
-        <Canvas x:Name="FloorLinesCanvas"/>
+        <Canvas x:Name="FloorLinesCanvas" />
 
         <!-- 电梯轿厢外框：深绿（贴片外观） -->
         <Border Width="80"
@@ -44,4 +52,9 @@
             </Grid>
         </Border>
     </Canvas>
+      <Panel Grid.Column="3"></Panel>
+
+  </Grid>
+
+
 </UserControl>

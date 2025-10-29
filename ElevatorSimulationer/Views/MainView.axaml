@@ -12,7 +12,7 @@
   <Grid>
     <Grid.RowDefinitions></Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="250"></ColumnDefinition>
+      <ColumnDefinition Width="130"></ColumnDefinition>
       <ColumnDefinition Width="2"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="2"></ColumnDefinition>
@@ -21,14 +21,15 @@
       <ColumnDefinition Width="290"></ColumnDefinition>
     </Grid.ColumnDefinitions>
 
-    <!--日志-->
-      <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-        <Label FontWeight="Bold">日志</Label>
-      </StackPanel>
+    <!--电梯-->
+      <local:ElevatorSportView Grid.Column="0"></local:ElevatorSportView>
+
+        
     <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="1"></Border>
 
-    <!--电梯-->
-      <local:ElevatorSportView Grid.Column="2"></local:ElevatorSportView>
+    <!--日志-->
+        <local:LogDisplayView Grid.Column="2"></local:LogDisplayView>
+
 
     <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="3"></Border>
 

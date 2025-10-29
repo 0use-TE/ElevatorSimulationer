@@ -17,12 +17,24 @@ namespace ElevatorSimulationer.ViewModels
     {
         private readonly ILogger<ElevatorUIViewModel> _logger;
         private readonly IEventAggregator _eventAggregator;
+
+        private int _currentFloor=1;
+        public int CurrentFloor
+        {
+            get => _currentFloor;
+            set => SetProperty(ref _currentFloor, value);
+        }
         public ObservableCollection<ElevatorFloorViewModel> ElevatorFloorModel { get;private set; } = new ObservableCollection<ElevatorFloorViewModel>();
 
         public ElevatorUIViewModel(ILogger<ElevatorUIViewModel> logger,IEventAggregator eventAggregator)
         {
             _logger = logger;
             _eventAggregator = eventAggregator;
+
+            _eventAggregator.GetEvent<ElevatorPassingFloorEvent>().Subscribe(x =>
+            {
+                CurrentFloor = x;
+            });
 
             foreach (var item in Enumerable.Range(0, Settings.FloorCount))
                {

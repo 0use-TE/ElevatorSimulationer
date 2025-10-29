@@ -8,6 +8,8 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using DryIoc.Microsoft.DependencyInjection;
 using ElevatorSimulationer.DispatchAlgorithm;
+using ElevatorSimulationer.LogModule;
+using ElevatorSimulationer.Services;
 using ElevatorSimulationer.ViewModels;
 using ElevatorSimulationer.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,19 @@ namespace ElevatorSimulationer
         {
             IServiceCollection serviceCollection = new ServiceCollection();
 
+            serviceCollection.AddLogging(builder =>
+            {
+                builder.AddSerilog();
+            });
+
+            serviceCollection.AddSingleton<ElevatorUIViewModel>();
+            serviceCollection.AddSingleton<OutElevatorUIViewModel>();
+
+            serviceCollection.AddSingleton<MemoryLogService>();
+
+            Container.GetContainer().Populate(serviceCollection);
+
+            var memorySink= Container.Resolve<MemorySink>();
             //Logger
             // 配置日志
             Log.Logger = new LoggerConfiguration()
@@ -49,17 +64,8 @@ namespace ElevatorSimulationer
                     retainedFileCountLimit: 7           // 保留最近7天
                 )
                 .WriteTo.Debug()
+                .WriteTo.Sink(memorySink)
                 .CreateLogger();
-
-            serviceCollection.AddLogging(builder =>
-            {
-                builder.AddSerilog();
-            });
-
-            serviceCollection.AddSingleton<ElevatorUIViewModel>();
-            serviceCollection.AddSingleton<OutElevatorUIViewModel>();
-
-            Container.GetContainer().Populate(serviceCollection);
             // Register you Services, Views, Dialogs, etc.
         }
         protected override void OnInitialized()

@@ -4,12 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="using:ElevatorSimulationer.Views"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
         x:Class="ElevatorSimulationer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="{Binding Title}">
 
-  <local:MainView></local:MainView>
+  <Grid RowDefinitions="45,*">
+    <StackPanel Grid.Row="0" Background="lightgray" VerticalAlignment="Center">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+
+         <StackPanel Grid.Column="0" Orientation="Horizontal" >
+          
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0">
+          <Button Background="lightgray" Margin="0">
+          <TextBlock FontSize="24" ToolTip.Tip="设置">⚙</TextBlock>
+          </Button>
+             <Button Background="lightgray" Margin="0">
+          <TextBlock FontSize="24" ToolTip.Tip="Star">⭐</TextBlock>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </StackPanel>
+  <local:MainView Grid.Row="1"></local:MainView>
+  </Grid>
 
 </Window>
