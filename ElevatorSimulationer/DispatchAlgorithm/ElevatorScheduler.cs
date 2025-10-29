@@ -99,7 +99,7 @@ namespace ElevatorSimulationer.DispatchAlgorithm
             {
                 SetTarget(next, _currentDirection);
             }
-            // 5. 【关键修改】完全无请求 → 选择“最近楼层”作为临时目标
+            // 5. 完全无请求 → 选择“最近楼层”作为临时目标
             else
             {
                 ChooseNearestFloorAsEmergencyStop();
@@ -112,13 +112,12 @@ namespace ElevatorSimulationer.DispatchAlgorithm
         #endregion
 
         #region 1. 收集请求（内部 + 外部按钮）
-
         private void CollectAllRequests()
         {
             var upList = new List<int>();
             var downList = new List<int>();
 
-            // ---- 内部按钮 ----
+            // ---- 内部按钮（无方向，按目标楼层）----
             foreach (var vm in ElevatorFloorViewModels.Where(vm => vm.IsActived))
             {
                 int f = vm.Floor;
@@ -129,30 +128,32 @@ namespace ElevatorSimulationer.DispatchAlgorithm
                 else _logger.LogDebug($"内部按钮 {f} 层已在当前层，待开门");
             }
 
-            // ---- 外部按钮（关键修复）----
+            // ---- 外部按钮（关键：按按钮方向分类！）----
             foreach (var vm in OutElevatorFloorViewModels)
             {
                 int f = vm.Floor;
                 if (!IsValidFloor(f)) continue;
 
-                // 无论上行还是下行按钮，只要楼层 > 当前楼 → 上行队列
-                if (vm.IsUpActived || vm.IsDownActived)
+                // 上行按钮 → 只能加入上行队列（无论楼层高低）
+                if (vm.IsUpActived)
                 {
-                    if (f > _currentFloor)
-                    {
-                        _upStops.Add(f);
-                        upList.Add(f);
-                    }
-                    else if (f < _currentFloor)
-                    {
-                        _downStops.Add(f);
-                        downList.Add(f);
-                    }
-                    else
-                    {
-                        // 在当前楼层，按了外部按钮 → 立即开门
-                        _logger.LogDebug($"外部按钮 {f} 层在当前层，待开门");
-                    }
+                    _upStops.Add(f);
+                    upList.Add(f);
+                    _logger.LogDebug($"外部上行按钮 → {f} 楼加入上行队列");
+                }
+
+                // 下行按钮 → 只能加入下行队列（无论楼层高低）
+                if (vm.IsDownActived)
+                {
+                    _downStops.Add(f);
+                    downList.Add(f);
+                    _logger.LogDebug($"外部下行按钮 → {f} 楼加入下行队列");
+                }
+
+                // 当前楼层按钮 → 直接开门，不加入队列
+                if (f == _currentFloor && (vm.IsUpActived || vm.IsDownActived))
+                {
+                    _logger.LogDebug($"外部按钮 {f} 层在当前层，待开门");
                 }
             }
 

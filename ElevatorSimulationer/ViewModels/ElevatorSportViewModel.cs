@@ -133,6 +133,11 @@ namespace ElevatorSimulationer.ViewModels
                 // ========== 实时更新楼层（安全）==========
                 int newFloor = CalculateFloorFromY(ElevatorY);
 
+                if(Math.Abs(targetFloor-newFloor)<=1)
+                {
+                    _state = ElevatorState.Busy;
+                }
+
                 if (newFloor != CurrentFloor)
                 {
                     int previousFloor = CurrentFloor;
@@ -173,7 +178,6 @@ namespace ElevatorSimulationer.ViewModels
         }
         private void StartDoorSequence(int completedFloor)
         {
-            _state = ElevatorState.Busy;
 
             // 保持 Busy 状态
             OpenDoor(() =>
@@ -190,9 +194,10 @@ namespace ElevatorSimulationer.ViewModels
         
                         _state = ElevatorState.Idle;  // 关键：恢复可移动
 
+                        _logger.LogInformation("楼层 {Floor} 处理完成，电梯空闲，可接受新任务", completedFloor);
+
                         _eventAggregator.GetEvent<ElevatorStateChangedEvent>().Publish();
 
-                        _logger.LogInformation("楼层 {Floor} 处理完成，电梯空闲，可接受新任务", completedFloor);
                     });
                 };
                 _doorTimer.Start();
