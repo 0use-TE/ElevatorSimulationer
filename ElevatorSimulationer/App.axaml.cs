@@ -53,6 +53,9 @@ namespace ElevatorSimulationer
 
             Container.GetContainer().Populate(serviceCollection);
 
+            //注册DyIOC
+            containerRegistry.RegisterDialog<SettingView,SettingViewModel>("SettingView");
+
             var memorySink= Container.Resolve<MemorySink>();
             //Logger
             // 配置日志

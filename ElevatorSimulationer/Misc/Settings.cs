@@ -10,7 +10,7 @@ namespace ElevatorSimulationer.Misc
     internal static class Settings
     {
         public static int FloorCount { get; set; } = 5;
-        public static IBrush ClickDefaultFill { get; set; } = Brushes.OrangeRed;
+        public static IBrush ClickDefaultFill { get; set; } = Brushes.LightYellow;
         public static IBrush DefaultFill { get; set; } = Brushes.White;
     }
 }

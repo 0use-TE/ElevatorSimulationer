@@ -1,11 +1,21 @@
+using Prism.Commands;
+using Prism.Dialogs;
+
 namespace ElevatorSimulationer.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel()
+        private readonly IDialogService _dialogService;
+        public MainWindowViewModel(IDialogService dialogService)
         {
-            Title = "Welcome to Prism.Avalonia!";
+            _dialogService = dialogService;
+            Title = "Elevator Eimulationer";
+            OpenSetting=new DelegateCommand(()=>{
+                dialogService.ShowDialog("SettingView");
+                
+            });
         }
+        public DelegateCommand OpenSetting { get; set; }
 
     }
 }

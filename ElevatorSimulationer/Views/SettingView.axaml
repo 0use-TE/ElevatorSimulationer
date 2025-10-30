@@ -1,0 +1,87 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="ElevatorSimulationer.Views.SettingView"
+             Width="500" Height="600">
+
+    <TabControl Theme="{StaticResource CardTabControl}" TabStripPlacement="Left">
+
+        <!-- 项目介绍 -->
+        <TabItem Header="介绍">
+            <ScrollViewer>
+                <StackPanel Margin="20" Spacing="12">
+
+                    <TextBlock Text="Elevator Simulationer" FontSize="22" FontWeight="Bold"/>
+
+                    <TextBlock Text="版本：1.0.0" FontSize="14" Foreground="Gray"/>
+
+                    <Separator/>
+
+                    <TextBlock TextWrapping="Wrap">
+                        Elevator Simulationer 是一个基于 Avalonia + Prism 架构的跨平台电梯仿真系统。
+                        通过模块化的 MVVM 架构和事件聚合机制，实现了电梯调度逻辑、楼层交互、日志记录、
+                        以及多线程事件响应等功能。系统旨在帮助学习者理解电梯控制算法和上位机架构设计。
+                    </TextBlock>
+
+                    <Separator/>
+
+                    <StackPanel>
+                        <TextBlock Text="主要特性：" FontWeight="Bold"/>
+                        <ItemsControl>
+                            <ItemsControl.Items>
+                                <TextBlock Text="• 支持双击取消、点击防抖的电梯按键逻辑"/>
+                                <TextBlock Text="• 支持内外呼梯事件分离与聚合"/>
+                                <TextBlock Text="• 可扩展的 Serilog 日志记录系统"/>
+                                <TextBlock Text="• Prism 模块化 MVVM 架构"/>
+                                <TextBlock Text="• Avalonia 跨平台 UI 支持"/>
+                            </ItemsControl.Items>
+                        </ItemsControl>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- 开源说明 -->
+        <TabItem Header="开源">
+            <ScrollViewer>
+                <StackPanel Margin="20" Spacing="10">
+
+                    <TextBlock Text="开源声明" FontSize="18" FontWeight="Bold"/>
+                    <TextBlock TextWrapping="Wrap">
+                        本项目遵循 MIT License 开源协议，允许自由使用、修改和分发。
+                        欢迎对该项目提出改进建议或提交 PR。
+                    </TextBlock>
+
+                    <Separator/>
+
+                    <TextBlock Text="仓库地址：https://github.com/0use-TE/ElevatorSimulationer" FontWeight="Bold"/>
+                    <TextBlock>
+                    </TextBlock>
+
+                    <Separator/>
+
+                    <TextBlock Text="作者信息" FontWeight="Bold"/>
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="作者：Ouse"/>
+                        <TextBlock Text="语言栈：C# / .NET 8 / Avalonia / Prism"/>
+                        <TextBlock Text="邮箱：2216528769@qq.com"/>
+                    </StackPanel>
+
+                    <Separator/>
+
+                    <TextBlock Text="感谢" FontWeight="Bold"/>
+                    <TextBlock TextWrapping="Wrap">
+                        感谢 .NET 社区、Avalonia 团队、Prism Library 以及所有开源贡献者。
+                    </TextBlock>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+    </TabControl>
+</UserControl>
