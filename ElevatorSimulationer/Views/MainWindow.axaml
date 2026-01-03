@@ -10,21 +10,6 @@
         Icon="/Assets/logo.ico"
         Title="{Binding Title}">
 
-  <Grid RowDefinitions="45,*">
-    <StackPanel Grid.Row="0" Background="lightgray" VerticalAlignment="Center">
-      <Grid ColumnDefinitions="Auto,*,Auto">
-
-         <StackPanel Grid.Column="0" Orientation="Horizontal" >
-          
-        </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0">
-          <Button Background="lightgray" Margin="0" Command="{Binding OpenSetting}">
-          <TextBlock FontSize="24" ToolTip.Tip="设置">⚙</TextBlock>
-          </Button>
-        </StackPanel>
-      </Grid>
-    </StackPanel>
   <local:MainView Grid.Row="1"></local:MainView>
-  </Grid>
 
 </Window>

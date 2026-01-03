@@ -21,7 +21,7 @@ using Serilog;
 
 namespace ElevatorSimulationer
 {
-    internal partial class App : PrismApplication
+    public partial class App : PrismApplication
     {
         private ElevatorScheduler? _elevatorScheduler;
         public override void Initialize()
@@ -34,9 +34,15 @@ namespace ElevatorSimulationer
 
         protected override AvaloniaObject CreateShell()
         {
-            return Container.Resolve<MainWindow>();
-        }
+            // 如果是桌面端，返回 MainWindow
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime)
+            {
+                return Container.Resolve<MainWindow>();
+            }
 
+            // 如果是 WASM 或移动端，返回 MainView (UserControl)
+            return Container.Resolve<MainView>();
+        }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             IServiceCollection serviceCollection = new ServiceCollection();
@@ -54,18 +60,21 @@ namespace ElevatorSimulationer
             Container.GetContainer().Populate(serviceCollection);
 
             //注册DyIOC
-            containerRegistry.RegisterDialog<SettingView,SettingViewModel>("SettingView");
+            containerRegistry.RegisterDialog<SettingView, SettingViewModel>("SettingView");
 
-            var memorySink= Container.Resolve<MemorySink>();
+            var memorySink = Container.Resolve<MemorySink>();
             //Logger
             // 配置日志
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()                     // 最低日志等级
-                .WriteTo.File(
+#if BROWSER
+#else
+               .WriteTo.File(
                     "Logs/log-.txt",                     // 日志文件路径
                     rollingInterval: RollingInterval.Day, // 每天一个日志文件
                     retainedFileCountLimit: 7           // 保留最近7天
                 )
+#endif
                 .WriteTo.Debug()
                 .WriteTo.Sink(memorySink)
                 .CreateLogger();
@@ -94,9 +103,9 @@ namespace ElevatorSimulationer
                 else
                     _logger.LogError("调度算法加载失败!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError("调度算法加载失败!\n"+ex.Message);
+                _logger.LogError("调度算法加载失败!\n" + ex.Message);
             }
         }
     }

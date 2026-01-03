@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="ElevatorSimulationer.Desktop/ElevatorSimulationer.Desktop.csproj" Id="525caaba-d1f7-42ab-9cfe-3512be300a95" />
+  <Project Path="ElevatorSimulationer.WASM/ElevatorSimulationer.WASM.csproj" Id="7604c266-112e-49e7-b278-b46a092d9925" />
   <Project Path="ElevatorSimulationer/ElevatorSimulationer.csproj" />
 </Solution>

@@ -9,36 +9,55 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Class="ElevatorSimulationer.Views.MainView"
              x:DataType="viewmodels:MainViewModel">
-  <Grid>
-    <Grid.RowDefinitions></Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="130"></ColumnDefinition>
-      <ColumnDefinition Width="2"></ColumnDefinition>
-      <ColumnDefinition Width="*"></ColumnDefinition>
-      <ColumnDefinition Width="2"></ColumnDefinition>
-      <ColumnDefinition Width="240"></ColumnDefinition>
-      <ColumnDefinition Width="2"></ColumnDefinition>
-      <ColumnDefinition Width="290"></ColumnDefinition>
-    </Grid.ColumnDefinitions>
 
-    <!--电梯-->
+  <DockPanel>
+    <Grid RowDefinitions="45,*" DockPanel.Dock="Top">
+      <StackPanel Grid.Row="0" Background="lightgray" VerticalAlignment="Center">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <StackPanel Grid.Column="0"  Orientation="Horizontal" >
+            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" FontSize="20">ElevatorSimulationer</TextBlock>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0">
+            <Button Background="lightgray" Margin="0" Command="{Binding OpenSetting}">
+              <TextBlock FontSize="24" ToolTip.Tip="设置">⚙</TextBlock>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </Grid>
+
+    <Grid>
+      <Grid.RowDefinitions></Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="130"></ColumnDefinition>
+        <ColumnDefinition Width="2"></ColumnDefinition>
+        <ColumnDefinition Width="*"></ColumnDefinition>
+        <ColumnDefinition Width="2"></ColumnDefinition>
+        <ColumnDefinition Width="240"></ColumnDefinition>
+        <ColumnDefinition Width="2"></ColumnDefinition>
+        <ColumnDefinition Width="290"></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+
+      <!--电梯-->
       <local:ElevatorSportView Grid.Column="0"></local:ElevatorSportView>
 
-        
-    <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="1"></Border>
 
-    <!--日志-->
-        <local:LogDisplayView Grid.Column="2"></local:LogDisplayView>
+      <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="1"></Border>
+
+      <!--日志-->
+      <local:LogDisplayView    Grid.Column="2"></local:LogDisplayView>
 
 
-    <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="3"></Border>
+      <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="3"></Border>
 
-    <!--用户面板-->
-    <local:ElevatorUIView Grid.Column="4"></local:ElevatorUIView>
+      <!--用户面板-->
+      <local:ElevatorUIView Grid.Column="4"></local:ElevatorUIView>
 
-    <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="5"></Border>
+      <Border BorderBrush="LightGray" BorderThickness="2 0 0 0 " Grid.Column="5"></Border>
 
-    <local:OutElevatorUIView Grid.Column="6"></local:OutElevatorUIView>
+      <local:OutElevatorUIView Grid.Column="6"></local:OutElevatorUIView>
 
-  </Grid>
+    </Grid>
+  </DockPanel>
+
 </UserControl>

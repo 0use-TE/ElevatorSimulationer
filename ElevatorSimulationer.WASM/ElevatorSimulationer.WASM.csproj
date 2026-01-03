@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+	<PropertyGroup>
+		<TargetFramework>net10.0-browser</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<Nullable>enable</Nullable>
+		<WasmBuildNative>true</WasmBuildNative>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+
+		<!--这里禁用裁剪，因为裁剪容易造成问题，您可以自己设置裁剪规则-->
+		<PublishTrimmed>false</PublishTrimmed>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Browser" Version="11.3.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ElevatorSimulationer\ElevatorSimulationer.csproj" />
+	</ItemGroup>
+</Project>

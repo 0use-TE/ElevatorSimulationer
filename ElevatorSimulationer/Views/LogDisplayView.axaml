@@ -10,7 +10,12 @@
              x:Class="ElevatorSimulationer.Views.LogDisplayView"
              x:DataType="viewmodels:LogDisplayViewModel">
 
-    <TabControl Theme="{StaticResource CardTabControl}">
+    <TabControl Theme="{StaticResource CardTabControl}" >
+      <TabControl.Styles>
+        <Style Selector="ScrollViewer">
+          <Setter Property="Margin" Value="8"></Setter>
+        </Style>
+      </TabControl.Styles>
         <!-- 信息 -->
         <TabItem>
             <TabItem.Header>
@@ -32,7 +37,7 @@
             <TabItem.Header>
                 <TextBlock Text="调试" Foreground="#0096FF" FontWeight="Bold"/>
             </TabItem.Header>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"  >
                 <ItemsControl ItemsSource="{Binding Debug}">
                     <ItemsControl.DataTemplates>
                         <DataTemplate DataType="system:String">

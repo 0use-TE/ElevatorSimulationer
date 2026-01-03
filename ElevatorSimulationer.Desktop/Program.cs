@@ -1,7 +1,7 @@
 using System;
 using Avalonia;
 
-namespace ElevatorSimulationer
+namespace ElevatorSimulationer.Desktop
 {
     internal sealed class Program
     {
