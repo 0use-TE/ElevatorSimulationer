@@ -8,6 +8,7 @@
 
 		<!--这里禁用裁剪，因为裁剪容易造成问题，您可以自己设置裁剪规则-->
 		<PublishTrimmed>false</PublishTrimmed>
+		<Platforms>AnyCPU;ARM32;ARM64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

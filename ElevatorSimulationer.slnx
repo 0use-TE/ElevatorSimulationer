@@ -1,5 +1,25 @@
 <Solution>
-  <Project Path="ElevatorSimulationer.Desktop/ElevatorSimulationer.Desktop.csproj" Id="525caaba-d1f7-42ab-9cfe-3512be300a95" />
-  <Project Path="ElevatorSimulationer.WASM/ElevatorSimulationer.WASM.csproj" Id="7604c266-112e-49e7-b278-b46a092d9925" />
-  <Project Path="ElevatorSimulationer/ElevatorSimulationer.csproj" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM32" />
+    <Platform Name="ARM64" />
+  </Configurations>
+  <Project Path="ElevatorSimulationer.Desktop/ElevatorSimulationer.Desktop.csproj" Id="525caaba-d1f7-42ab-9cfe-3512be300a95">
+    <Platform Solution="*|ARM32" Project="ARM32" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Build Solution="*|ARM32" Project="false" />
+    <Build Solution="*|ARM64" Project="false" />
+    <Build Solution="Debug|Any CPU" Project="false" />
+  </Project>
+  <Project Path="ElevatorSimulationer.WASM/ElevatorSimulationer.WASM.csproj" Id="7604c266-112e-49e7-b278-b46a092d9925">
+    <Platform Solution="*|ARM32" Project="ARM32" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Build Solution="*|ARM32" Project="false" />
+    <Build Solution="*|ARM64" Project="false" />
+    <Build Solution="Debug|Any CPU" Project="false" />
+  </Project>
+  <Project Path="ElevatorSimulationer/ElevatorSimulationer.csproj">
+    <Platform Solution="*|ARM32" Project="ARM32" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+  </Project>
 </Solution>

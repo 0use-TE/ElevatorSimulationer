@@ -9,6 +9,7 @@
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<!-- 将本地库包含在解压内容中 -->
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<Platforms>AnyCPU;ARM32;ARM64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
